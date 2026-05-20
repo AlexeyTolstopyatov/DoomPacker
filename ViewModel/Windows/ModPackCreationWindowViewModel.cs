@@ -1,4 +1,6 @@
 ﻿using DoomPacker.Backend;
+using DoomPacker.Model;
+using HandyControl.Controls;
 using HandyControl.Tools.Command;
 using HandyControl.Tools.Extension;
 using System;
@@ -16,20 +18,33 @@ namespace DoomPacker.ViewModel.Windows
 {
     public class ModPackCreationWindowViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<string> ModsInFolder { get; set; }
-        public ObservableCollection<string> ModsInModPack { get; set; }
+        // Services
+        private FileManager fileManager = new();
+        private PackService packService = new();
+
+        // Events
         public ICommand FolderDoubleClickCommand { get; }
         public ICommand PackDoubldeClickCommand { get; }
+        public ICommand SaveClickCommand { get; }
 
-        private FileManager fileManager = new();
+        // Modpack Info
+        private string _imagePath;
+        private string _title;
+        private string _description;
+
+        // Mods lists
         private object _selectedItemFolder;
         private object _selectedItemPack;
+        public ObservableCollection<string> ModsInFolder { get; set; }
+        public ObservableCollection<string> ModsInModPack { get; set; }
+
 
         public ModPackCreationWindowViewModel()
         {
             FolderDoubleClickCommand = new RelayCommand<object>(OnDoubleClickFolder);
             PackDoubldeClickCommand = new RelayCommand<object>(OnDoubleClickPack);
-            
+            SaveClickCommand = new RelayCommand<object>(OnSaveButton_Click);
+
             ModsInFolder = new(fileManager.FindModsInDirectory());
             ModsInModPack = [];
         }
@@ -68,6 +83,54 @@ namespace DoomPacker.ViewModel.Windows
 
             ModsInModPack.DeleteIfExists(item.ToString());
             ModsInFolder.Add(item.ToString());
+        }
+
+        public string ImagePath
+        {
+            get => _imagePath;
+            set
+            {
+                _imagePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                _title = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Desctiption
+        {
+            get => _description;
+            set
+            {
+                _description = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void OnSaveButton_Click(object parameter)
+        {
+            SaveModpack(ImagePath, Title, Desctiption, ModsInModPack);
+        }
+
+        private ModPackContent SaveModpack(string ImagePath, string Title, string Description, ObservableCollection<string> Mods)
+        {
+            ModPackContent modPackContent = new()
+            {
+                Image = ImagePath,
+                Title = Title,
+                Description = Description,
+                ModsOrder = Mods.ToList()
+            };
+
+            return modPackContent;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

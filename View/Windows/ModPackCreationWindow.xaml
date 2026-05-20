@@ -26,22 +26,27 @@
                 <hc:ImageSelector
                     Height="164"
                     Width="164"
-                    Margin="10"/>
+                    Margin="10"
+                    SourceUpdated="{Binding ImagePath}"/>
                 <StackPanel
                     Margin="10"
                     Width="390">
                     <TextBlock 
                         Text="Title"
                         Foreground="White"/>
-                    <TextBox />
+                    <TextBox 
+                        Text="{Binding Title}"/>
                     <TextBlock
                         Text="Description"
                         Foreground="White"/>
-                    <RichTextBox 
+                    <TextBox 
                         Height="90"
                         VerticalScrollBarVisibility="Visible"
-                        >
-                    </RichTextBox>
+                        VerticalContentAlignment="Top"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap"
+                        Text="{Binding Description}">
+                    </TextBox>
                 </StackPanel>
             </StackPanel>
         </Border>

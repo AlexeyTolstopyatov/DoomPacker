@@ -13,7 +13,6 @@ namespace DoomPacker.Model
     {
         private string image = App.AppSettings.PackIconPath;
         private string title;
-        private string version;
         private string path;
 
         public string Image
@@ -33,16 +32,6 @@ namespace DoomPacker.Model
             {
                 title = value;
                 OnPropertyChanged("Title");
-            }
-        }
-
-        public string Version
-        {
-            get { return version; }
-            set
-            {
-                version = value;
-                OnPropertyChanged("Version");
             }
         }
 
