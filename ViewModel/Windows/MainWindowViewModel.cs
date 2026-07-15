@@ -1,46 +1,33 @@
-﻿using DoomPacker.Model;
-using HandyControl.Tools.Command;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Collections.ObjectModel;
+using DoomPacker.Model;
 
-namespace DoomPacker.ViewModel
+namespace DoomPacker.ViewModel.Windows
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : NotifyPropertyChanged
     {
-        private Object selectedModPack;
-        public ObservableCollection<Object> Collection { get; set; }
+        private object _selectedModPack;
+        public ObservableCollection<ModContainer> Collection { get; set; }
 
-        public Object SelectedModPack
+        public object SelectedModPack
         {
-            get { return selectedModPack; }
-            set
-            {
-                selectedModPack = value;
-                OnPropertyChanged("SelectedModPack");
-            }
+            get => _selectedModPack;
+            set => SetField(ref _selectedModPack, value);
         }
 
         public MainWindowViewModel()
         {
-            Collection = [
+            // Начиная с .net 5.0 все что вы обозначаете без знака ? не может содержать null.
+            // Оно обязано быть инициализировано. 
+            //
+            // selectedModPack не инициализирован, => warning 
+            // MainWindowViewModel конструктор не инициализирует _selectedModPack => warning
+            Collection = 
+            [
                 new ModPackInfo { Title = "ModPack 1", Path = "Null" },
-                new LoadOrderList {Title = "LoadOrderList", Path = "Null"}
-                ];
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+                new LoadOrderList { Title = "LoadOrderList", Path = "Null" }
+            ];
+            // никаких null
+            _selectedModPack = Collection[0];
         }
     }
 }

@@ -1,34 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DoomPacker.Model
 {
     public class ModPackContent : ModPackInfo, INotifyPropertyChanged
     {
-        private string? description;
-        private List<string> modsOrder;
+        private string? _description;
+        private List<string> _modsOrder;
 
         public string Description
         {
-            get { return description; }
+            get { return _description; }
             set 
             {
-                description = value;
+                _description = value;
                 OnPropertyChanged("Description");
             }
         }
 
         public List<string> ModsOrder
         {
-            get { return modsOrder; }
+            get { return _modsOrder; }
             set
             {
-                modsOrder = value;
+                _modsOrder = value;
                 OnPropertyChanged();
             }
         }

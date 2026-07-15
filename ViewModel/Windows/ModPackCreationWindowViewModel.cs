@@ -1,34 +1,26 @@
 ﻿using DoomPacker.Backend;
-using DoomPacker.Model;
-using HandyControl.Controls;
 using HandyControl.Tools.Command;
 using HandyControl.Tools.Extension;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace DoomPacker.ViewModel.Windows
 {
-    public class ModPackCreationWindowViewModel : INotifyPropertyChanged
+    public class ModPackCreationWindowViewModel : NotifyPropertyChanged
     {
         // Services
-        private FileManager fileManager = new();
-        private PackService packService = new();
+        private FileManager _fileManager = new();
+        private PackService _packService = new();
 
         // Events
         public ICommand FolderDoubleClickCommand { get; }
-        public ICommand PackDoubldeClickCommand { get; }
+        public ICommand PackDoubleClickCommand { get; }
         public ICommand SaveClickCommand { get; }
+        public ICommand RememberImagePathCommand { get; }
+        public ICommand ViewModelStateCommand { get; }
 
         // Modpack Info
-        private string _imagePath;
+        private Uri? _imagePath;
         private string _title;
         private string _description;
 
@@ -42,35 +34,42 @@ namespace DoomPacker.ViewModel.Windows
         public ModPackCreationWindowViewModel()
         {
             FolderDoubleClickCommand = new RelayCommand<object>(OnDoubleClickFolder);
-            PackDoubldeClickCommand = new RelayCommand<object>(OnDoubleClickPack);
-            SaveClickCommand = new RelayCommand<object>(OnSaveButton_Click);
-
-            ModsInFolder = new(fileManager.FindModsInDirectory());
+            PackDoubleClickCommand = new RelayCommand<object>(OnDoubleClickPack);
+            SaveClickCommand = new RelayCommand<object>(SaveModpack);
+            RememberImagePathCommand = new RelayCommand<Uri>(RememberImagePath);
+            ViewModelStateCommand = new RelayCommand(ViewModelState);
+            
+            ModsInFolder = new ObservableCollection<string>(_fileManager.FindModsInDirectory());
             ModsInModPack = [];
         }
 
         public object SelectedItemFolder
         {
             get => _selectedItemFolder;
-            set
-            {
-                _selectedItemFolder = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _selectedItemFolder, value);
         }
 
         public object SelectedItemPack
         {
             get => _selectedItemPack;
-            set
-            {
-                _selectedItemPack = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _selectedItemPack, value);
         }
 
+        private void ViewModelState(object _)
+        {
+            Console.WriteLine(@$"At the moment of saving:
+Title: {Title}
+Description: {Description}
+
+Preview Image: {ImagePath?.AbsolutePath ?? "what"}
+Mods (in folder): {ModsInFolder.Count}
+Mods (in pack): {ModsInModPack.Count}
+");
+        }
+        
         private void OnDoubleClickFolder(object parameter)
         {
+            // Че это такое...
             var item = parameter ?? SelectedItemFolder;
 
             ModsInFolder.DeleteIfExists(item.ToString());
@@ -85,60 +84,46 @@ namespace DoomPacker.ViewModel.Windows
             ModsInFolder.Add(item.ToString());
         }
 
-        public string ImagePath
+        public Uri? ImagePath
         {
             get => _imagePath;
-            set
-            {
-                _imagePath = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _imagePath, value);
         }
 
         public string Title
         {
             get => _title;
-            set
-            {
-                _title = value;
-                OnPropertyChanged();
-            }
+            set => SetField(ref _title, value);
         }
 
-        public string Desctiption
+        public string Description
         {
             get => _description;
-            set
+            set => SetField(ref _description, value);
+        }
+
+        private void RememberImagePath(Uri? parameter)
+        {
+            if (parameter is not null)
             {
-                _description = value;
-                OnPropertyChanged();
+                ImagePath = parameter;
             }
-        }
-
-        private void OnSaveButton_Click(object parameter)
-        {
-            SaveModpack(ImagePath, Title, Desctiption, ModsInModPack);
-        }
-
-        private ModPackContent SaveModpack(string ImagePath, string Title, string Description, ObservableCollection<string> Mods)
-        {
-            ModPackContent modPackContent = new()
+            else
             {
-                Image = ImagePath,
-                Title = Title,
-                Description = Description,
-                ModsOrder = Mods.ToList()
-            };
-
-            return modPackContent;
+                Console.WriteLine("parameter is null");
+            }
+            // А если вдруг null то вы уже сами думайте надо ли тут что-то делать
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        private void SaveModpack(object parameter)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            // ModPackContent modPackContent = new()
+            // {
+            //     Image = ImagePath,
+            //     Title = Title,
+            //     Description = Description,
+            //     ModsOrder = Mods
+            // };
         }
     }
 }

@@ -1,56 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿namespace DoomPacker.Model;
 
-namespace DoomPacker.Model
+public class ModPackInfo : ModContainer
 {
-    public class ModPackInfo : INotifyPropertyChanged
+    // Поскольку вы наследуете ModContainer, то вы автоматически подтягиваете все protected 
+    // методы и поля этого класса. Поэтому теперь о OnPropertyChanged не надо. 
+    private string? _description;
+    
+    public string? Description
     {
-        private string image = App.AppSettings.PackIconPath;
-        private string title;
-        private string path;
-
-        public string Image
-        {
-            get { return image; }
-            set
-            {
-                image = value;
-                OnPropertyChanged("Image");
-            }
-        }
-
-        public string Title
-        {
-            get { return title; }
-            set
-            {
-                title = value;
-                OnPropertyChanged("Title");
-            }
-        }
-
-        public string Path
-        {
-            get { return path; }
-            set
-            {
-                path = value;
-                OnPropertyChanged("Path");
-            }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
+        get => _description;
+        set => SetField(ref _description, value);
     }
 }

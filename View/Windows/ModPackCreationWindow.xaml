@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DoomPacker.View.Windows"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:vm="clr-namespace:DoomPacker.ViewModel.Windows"
         mc:Ignorable="d"
         Height="700" Width="600"
         WindowStyle="ToolWindow"
@@ -14,6 +14,10 @@
         Background="{StaticResource RegionBrush}"
         FontSize="16"
         Title="Create new Modpack">
+    <hc:Window.DataContext>
+        <vm:ModPackCreationWindowViewModel/>
+    </hc:Window.DataContext>
+    
     <Grid>
         <Border
             HorizontalAlignment="Stretch"
@@ -24,10 +28,23 @@
             <StackPanel
                 Orientation="Horizontal">
                 <hc:ImageSelector
+                    x:Name="ImageSelector"
                     Height="164"
                     Width="164"
-                    Margin="10"
-                    SourceUpdated="{Binding ImagePath}"/>
+                    Margin="10">
+                    <hc:Interaction.Triggers>
+                        <hc:EventTrigger
+                            EventName="ImageSelected"> <!-- SourceUpdated не связался почему-то -->
+                            <!-- 
+                                Фотка обновится сама, но чтобы запомнить что вы выбрали, 
+                                можно привязать вторую команду, которая рулит VM
+                            -->
+                            <hc:InvokeCommandAction
+                                Command="{Binding RememberImagePathCommand}"
+                                CommandParameter="{Binding ElementName=ImageSelector, Path=Uri}"/>
+                        </hc:EventTrigger>
+                    </hc:Interaction.Triggers>
+                </hc:ImageSelector>
                 <StackPanel
                     Margin="10"
                     Width="390">
@@ -79,13 +96,13 @@
                         BorderThickness="0"
                         ItemsSource="{Binding ModsInFolder}"
                         SelectedItem="{Binding SelectedItemFolder, Mode=TwoWay}">
-                        <b:Interaction.Triggers>
-                            <b:EventTrigger EventName="MouseDoubleClick">
-                                <b:InvokeCommandAction
+                        <hc:Interaction.Triggers>
+                            <hc:EventTrigger EventName="MouseDoubleClick">
+                                <hc:InvokeCommandAction
                                     Command="{Binding FolderDoubleClickCommand}"
                                     CommandParameter="{Binding SelectedItemFolder}"/>
-                            </b:EventTrigger>
-                        </b:Interaction.Triggers>
+                            </hc:EventTrigger>
+                        </hc:Interaction.Triggers>
                     </ListBox>
                 </Border>
                 <Border
@@ -101,13 +118,13 @@
                         BorderThickness="0"
                         ItemsSource="{Binding ModsInModPack}"
                         SelectedItem="{Binding SelectedItemPack, Mode=TwoWay}">
-                        <b:Interaction.Triggers>
-                            <b:EventTrigger EventName="MouseDoubleClick">
-                                <b:InvokeCommandAction
-                                    Command="{Binding PackDoubldeClickCommand}"
+                        <hc:Interaction.Triggers>
+                            <hc:EventTrigger EventName="MouseDoubleClick">
+                                <hc:InvokeCommandAction
+                                    Command="{Binding PackDoubleClickCommand}"
                                     CommandParameter="{Binding SelectedItemPack}"/>         
-                            </b:EventTrigger>
-                        </b:Interaction.Triggers>
+                            </hc:EventTrigger>
+                        </hc:Interaction.Triggers>
                     </ListBox>
                 </Border>
             </Grid>
@@ -119,6 +136,7 @@
             Margin="4"
             Content="Save"
             FontSize="16"
-            Height="36"/>
+            Height="36"
+            Command="{Binding ViewModelStateCommand}"/>
     </Grid>
 </hc:Window>

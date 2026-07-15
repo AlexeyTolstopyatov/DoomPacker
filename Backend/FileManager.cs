@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace DoomPacker.Backend
 {
     public class FileManager
     {
-        private string modsFolder = App.AppSettings.ModsFolder;
+        private readonly string _modsFolder = App.AppSettings.ModsFolder;
 
         public List<string> FindModsInDirectory()
         {
             List<string> modsList = [];
 
-            var directory = new DirectoryInfo(modsFolder);
+            var directory = new DirectoryInfo(_modsFolder);
 
             if (directory.Exists)
             {

@@ -1,8 +1,5 @@
 ﻿using DoomPacker.Backend;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Security.Policy;
 using System.Windows;
 
 namespace DoomPacker
@@ -20,10 +17,11 @@ namespace DoomPacker
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            
             if (File.Exists(_UserSettingsPath))
-                AppSettings = Settings.Read(_UserSettingsPath);
+                AppSettings = new Settings(_UserSettingsPath);
             else
-                AppSettings = Settings.Read(_DefaultSettingsPath);
+                AppSettings = new Settings(_DefaultSettingsPath);
         }
 
         protected override void OnExit(ExitEventArgs e)

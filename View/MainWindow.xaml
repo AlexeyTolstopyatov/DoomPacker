@@ -1,10 +1,11 @@
-﻿<hc:Window x:Class="DoomPacker.MainWindow"
+﻿<hc:Window x:Class="DoomPacker.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DoomPacker"
         xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:vm="clr-namespace:DoomPacker.ViewModel.Windows"
         mc:Ignorable="d"
         Title="Doom Packer" 
         MinHeight="450" 
@@ -14,8 +15,11 @@
         FontSize="15"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource SecondaryRegionBrush}">
-
-    <Window.Resources>
+    <!--
+        Вы используете hc:Window. Вы и должны тогда использовать все возможности 
+        этого ГМО окна (hc:Window).
+    -->
+    <hc:Window.Resources>
         <Style
             x:Key="SideMenuButtonStyle"
             TargetType="Button"
@@ -27,7 +31,13 @@
             <Setter Property="Background" Value="{StaticResource RegionBrush}"/>
             <Setter Property="hc:BackgroundSwitchElement.MouseHoverBackground" Value="{StaticResource SecondaryRegionBrush}"/>
         </Style>
-    </Window.Resources>
+    </hc:Window.Resources>
+    
+    <!-- Связка с View Model лучше пусть будет здесь, чем у *.xaml.cs -->
+    <hc:Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </hc:Window.DataContext>
+    
     <Grid>
         <Menu
             VerticalAlignment="Top"
@@ -40,19 +50,19 @@
                 Header="Menu">
                 <MenuItem
                     Header="New">
-                    <MenuItem 
-                    Header="New Pack"
-                    Click="MenuItem_Click"/>
-                    <MenuItem
-                    Header="New list"/>
+                        <MenuItem 
+                            Header="New Pack"
+                            Click="MenuItem_Click"/>
+                            <MenuItem
+                                Header="New list"/>
                 </MenuItem>
 
                 <MenuItem
                     Header="Import">
                     <MenuItem
-                    Header="Import pack"/>
-                    <MenuItem
-                    Header="Import list"/>
+                        Header="Import pack"/>
+                        <MenuItem
+                            Header="Import list"/>
                 </MenuItem>
 
                 <Separator/>
@@ -96,7 +106,7 @@
                         <Image 
                             Width="64"
                             Height="64"
-                            Source="{Binding Image}"/>
+                            Source="{Binding ImagePath}"/>
                         <hc:Card.Footer>
                             <StackPanel>
                                 <TextBlock 
